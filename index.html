@@ -627,10 +627,9 @@
             brilliant by 9 AM.
         </p>
 
-        <form class="subscribe-form" id="subscribeForm" action="https://formspree.io/f/xreoajrd" method="POST">
+        <form class="subscribe-form" id="subscribeForm" action="https://thesinglesource.azurewebsites.net/api/subscribe" method="POST">
             <input type="email" name="email" placeholder="your@email.com" required>
             <input type="text" name="city" placeholder="Your city (e.g. Charlotte, NC)" required style="flex:1;">
-            <input type="hidden" name="_subject" value="New Single Source subscriber!">
             <button type="submit">Get the brief &rarr;</button>
         </form>
         <p class="form-note">100% free. No spam. Unsubscribe anytime. We need your city for local news &mdash; we're not sending you a pizza (yet).</p>
@@ -920,10 +919,9 @@
         <p style="color: var(--text-muted); font-size: 1.1rem; margin-bottom: 32px;">
             Join the smart people who reclaimed their mornings.
         </p>
-        <form class="subscribe-form" action="https://formspree.io/f/xreoajrd" method="POST">
+        <form class="subscribe-form" action="https://thesinglesource.azurewebsites.net/api/subscribe" method="POST">
             <input type="email" name="email" placeholder="your@email.com" required>
             <input type="text" name="city" placeholder="Your city (e.g. Atlanta, GA)" required style="flex:1;">
-            <input type="hidden" name="_subject" value="New Single Source subscriber!">
             <button type="submit">Get the brief &rarr;</button>
         </form>
     </div>
@@ -974,7 +972,7 @@
                 const res = await fetch(form.action, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-                    body: JSON.stringify({ email, city, _subject: 'New Single Source subscriber!' })
+                body: JSON.stringify({ email, city })
                 });
                 if (res.ok) {
                     // Show success on the hero form
