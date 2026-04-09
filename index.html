@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -414,11 +414,12 @@
     <div class="container">
         <h2 style="font-size:2.5rem;margin-bottom:16px;">Tomorrow morning,<br>open <span style="color:var(--accent);">one email</span> instead of six.</h2>
         <p style="color:var(--text-muted);font-size:1.1rem;margin-bottom:32px;">Join the smart people who reclaimed their mornings.</p>
-        <form class="subscribe-form">
+        <form class="subscribe-form" id="subscribeForm2">
             <input type="email" name="email" placeholder="your@email.com" required>
             <input type="text" name="city" placeholder="Your city (e.g. Atlanta, GA)" required>
             <button type="submit">Get the brief &rarr;</button>
         </form>
+        <div class="form-success" id="formSuccess2">&#127881; You&rsquo;re in! Check your inbox tomorrow morning.</div>
     </div>
 </section>
 
@@ -448,8 +449,9 @@ document.querySelectorAll('.subscribe-form').forEach(form => {
                 body: JSON.stringify({ email, city })
             });
             if (res.ok) {
-                const success = document.getElementById('formSuccess');
-                if (success && form.id === 'subscribeForm') {
+                const successId = form.id === 'subscribeForm' ? 'formSuccess' : 'formSuccess2';
+                const success = document.getElementById(successId);
+                if (success) {
                     form.style.display = 'none';
                     const note = form.nextElementSibling;
                     if (note && note.classList.contains('form-note')) note.style.display = 'none';
