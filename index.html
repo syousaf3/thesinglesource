@@ -435,6 +435,29 @@
 document.querySelectorAll('.faq-q').forEach(q => q.addEventListener('click', () => q.parentElement.classList.toggle('open')));
 
 const API = 'https://thesinglesource.azurewebsites.net/api/subscribe';
+
+async function trySubscribe(email, city, attempt = 1) {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 30000);
+    try {
+        const res = await fetch(API, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+            body: JSON.stringify({ email, city }),
+            signal: controller.signal
+        });
+        clearTimeout(timeout);
+        return res;
+    } catch (err) {
+        clearTimeout(timeout);
+        if (attempt < 3) {
+            await new Promise(r => setTimeout(r, 2000));
+            return trySubscribe(email, city, attempt + 1);
+        }
+        throw err;
+    }
+}
+
 document.querySelectorAll('.subscribe-form').forEach(form => {
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -443,11 +466,7 @@ document.querySelectorAll('.subscribe-form').forEach(form => {
         const city = form.querySelector('input[name="city"]')?.value || '';
         btn.textContent = 'Joining...'; btn.disabled = true;
         try {
-            const res = await fetch(API, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-                body: JSON.stringify({ email, city })
-            });
+            const res = await trySubscribe(email, city);
             if (res.ok) {
                 const successId = form.id === 'subscribeForm' ? 'formSuccess' : 'formSuccess2';
                 const success = document.getElementById(successId);
@@ -457,12 +476,16 @@ document.querySelectorAll('.subscribe-form').forEach(form => {
                     if (note && note.classList.contains('form-note')) note.style.display = 'none';
                     success.style.display = 'block';
                 }
-                btn.textContent = "You're in! \u2705";
+                btn.textContent = "You're in! ";
             } else {
                 const data = await res.json().catch(() => ({}));
-                btn.textContent = data.error || 'Try again'; btn.disabled = false;
+                btn.textContent = data.error || 'Something went wrong — try again';
+                btn.disabled = false;
             }
-        } catch { btn.textContent = 'Try again'; btn.disabled = false; }
+        } catch {
+            btn.textContent = 'Server waking up  tap again!';
+            btn.disabled = false;
+        }
     });
 });
 
