@@ -75,7 +75,7 @@ footer a{color:var(--cyan);text-decoration:none}
 <!-- Equity Chart -->
 <div class="chart-box">
 <h2>📈 Equity Curve — NERVE vs S&P 500</h2>
-<div class="sub">\,000 starting capital · Top-1 signal strategy · Graded after 5 trading days</div>
+<div class="sub">\,000 starting capital · Top-3 combined strategy · Graded after 5 trading days</div>
 <div style="position:relative;height:280px;width:100%"><canvas id="equityChart"></canvas></div>
 </div>
 
@@ -141,7 +141,7 @@ function renderChart(d) {
   const nerveData = eq.curve.map(p => p.equity);
 
   // Generate a flat SPY line at  as placeholder (real SPY tracking coming)
-  const spyData = eq.curve.map(() => 10000);
+  const spyData = (eq.curve_spy || eq.curve.map(() => 10000)).map(p => typeof p === 'object' ? p.equity : p);
 
   const ctx = document.getElementById('equityChart').getContext('2d');
   if (chartInstance) chartInstance.destroy();
