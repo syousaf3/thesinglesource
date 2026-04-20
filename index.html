@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -219,7 +219,7 @@
             <a href="#how">How it works</a>
             <a href="#features">Features</a>
             <a href="#faq">FAQ</a>
-            <a href="sample/" style="color:var(--text-muted);font-size:0.85rem;font-weight:500;">See a sample</a><a href="#subscribe" class="nav-cta">Subscribe free</a>
+            <a href="sample/" style="color:var(--text-muted);font-size:0.85rem;font-weight:500;">See a sample</a><a href="results.html" style="color:#4ade80;font-size:0.85rem;font-weight:600;">?? Results</a><a href="#subscribe" class="nav-cta">Subscribe free</a>
         </div>
     </div>
 </nav>
@@ -479,7 +479,7 @@ document.querySelectorAll('.subscribe-form').forEach(form => {
                 btn.textContent = "You're in! ";
             } else {
                 const data = await res.json().catch(() => ({}));
-                btn.textContent = data.error || 'Something went wrong — try again';
+                btn.textContent = data.error || 'Something went wrong � try again';
                 btn.disabled = false;
             }
         } catch {
