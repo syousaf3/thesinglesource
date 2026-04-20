@@ -692,46 +692,33 @@
             <p>Every stock gets scored 0-10 across six dimensions. No gut feelings. No "trust me bro." Pure math.</p>
             <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;margin-top:20px;">
                 <div style="padding:16px;background:var(--surface2);border-radius:8px;">
-                    <div style="font-weight:700;margin-bottom:4px;">🚀 Momentum <span class="muted" style="font-weight:400;">(weight: 1.0)</span></div>
+                    <div style="font-weight:700;margin-bottom:4px;">🚀 Momentum</div>
                     <div style="font-size:13px;color:var(--text-muted);">RSI sweet spot + MACD confirmation. Is the stock moving with conviction?</div>
                 </div>
                 <div style="padding:16px;background:var(--surface2);border-radius:8px;">
-                    <div style="font-weight:700;margin-bottom:4px;">📊 Volume <span class="muted" style="font-weight:400;">(weight: 1.0)</span></div>
+                    <div style="font-weight:700;margin-bottom:4px;">📊 Volume</div>
                     <div style="font-size:13px;color:var(--text-muted);">Unusual volume vs 20-day avg. Highest predictor of 5-day returns.</div>
                 </div>
                 <div style="padding:16px;background:var(--surface2);border-radius:8px;">
-                    <div style="font-weight:700;margin-bottom:4px;">🌍 Regime <span class="muted" style="font-weight:400;">(weight: 1.0)</span></div>
+                    <div style="font-weight:700;margin-bottom:4px;">🌍 Regime</div>
                     <div style="font-size:13px;color:var(--text-muted);">VIX + SPY trend. Is the market healthy? (70% of stocks follow the market.)</div>
                 </div>
                 <div style="padding:16px;background:var(--surface2);border-radius:8px;">
-                    <div style="font-weight:700;margin-bottom:4px;">📈 Trend <span class="muted" style="font-weight:400;">(weight: 0.8)</span></div>
+                    <div style="font-weight:700;margin-bottom:4px;">📈 Trend</div>
                     <div style="font-size:13px;color:var(--text-muted);">Price vs SMA-20/50/200. Are all timeframes aligned?</div>
                 </div>
                 <div style="padding:16px;background:var(--surface2);border-radius:8px;">
-                    <div style="font-weight:700;margin-bottom:4px;">🏗️ Structure <span class="muted" style="font-weight:400;">(weight: 0.6)</span></div>
+                    <div style="font-weight:700;margin-bottom:4px;">🏗️ Structure</div>
                     <div style="font-size:13px;color:var(--text-muted);">Risk/reward ratio. More upside room than downside risk?</div>
                 </div>
                 <div style="padding:16px;background:var(--surface2);border-radius:8px;">
-                    <div style="font-weight:700;margin-bottom:4px;">🔄 Flow <span class="muted" style="font-weight:400;">(weight: 1.0)</span></div>
+                    <div style="font-weight:700;margin-bottom:4px;">🔄 Flow</div>
                     <div style="font-size:13px;color:var(--text-muted);">Options put/call ratio. Are institutions betting bullish?</div>
                 </div>
             </div>
-            <p style="margin-top:16px;">
-                <strong style="color:var(--accent);">NSS ≥ 7 = HIGH conviction</strong> · 
-                <strong style="color:var(--blue);">NSS ≥ 6 = MEDIUM</strong> · 
-                <strong style="color:var(--yellow);">NSS ≥ 5 = WATCHLIST</strong> · 
-                <span class="muted">Below 5 = We don't touch it.</span>
-            </p>
+            <p style="margin-top:16px;"><span class="muted">Scores determine conviction tier: HIGH ? MEDIUM ? WATCHLIST ? SKIP.</span></p>
         </div>
-        <div class="callout">
-            <span class="emoji">🔬</span> The pillar weights were determined by a grid-search optimizer 
-            running 200 random parameter combinations across 90 days of S&P 100 data, 
-            then validated with walk-forward testing on unseen data. We optimized for 
-            a composite of return, win rate, and average win size — not just one metric.
-            <br><br>
-            In English: a robot tried 200 different recipes and picked the one that made the most money 
-            on data it hadn't seen before.
-        </div>
+        <div class="callout"><span class="emoji">??</span> Pillar weights were determined by automated optimization across S&amp;P 100 data, then validated with walk-forward testing on unseen data. The exact weights are proprietary � but the results speak for themselves above.</div>
     </div>
 
     <!-- ═══ CTA ═══ -->

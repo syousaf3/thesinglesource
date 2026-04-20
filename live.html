@@ -1,0 +1,242 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Live Tracking — NERVE by The Single Source</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=JetBrains+Mono:wght@400;700;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<style>
+:root{--bg:#0a0a0f;--s1:#111118;--s2:#1a1a24;--border:#2a2a3a;--text:#e4e4e7;--muted:#71717a;--cyan:#22d3ee;--green:#22c55e;--red:#ef4444;--yellow:#facc15;--blue:#60a5fa}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+.container{max-width:1000px;margin:0 auto;padding:24px 20px}
+.nav{display:flex;align-items:center;justify-content:space-between;padding:16px 0;border-bottom:1px solid var(--border);margin-bottom:32px}
+.nav a{color:var(--muted);text-decoration:none;font-size:13px;font-weight:600;transition:color .2s}
+.nav a:hover{color:var(--cyan)}
+.logo{font-family:'JetBrains Mono',monospace;font-weight:900;font-size:18px;color:var(--cyan);letter-spacing:-0.5px}
+.hero{text-align:center;margin-bottom:40px}
+.hero h1{font-size:32px;font-weight:900;margin-bottom:8px}
+.hero h1 span{color:var(--cyan)}
+.hero p{color:var(--muted);font-size:14px}
+.chart-box{background:var(--s1);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:32px}
+.chart-box h2{font-size:16px;font-weight:800;margin-bottom:4px}
+.chart-box .sub{font-size:12px;color:var(--muted);margin-bottom:16px}
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:32px}
+.stat{background:var(--s1);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center}
+.stat .label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;font-weight:700}
+.stat .value{font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:900;margin-top:4px}
+.stat .detail{font-size:11px;color:var(--muted);margin-top:2px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;padding:10px 12px;border-bottom:2px solid var(--border);color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:0.5px;font-weight:700}
+td{padding:10px 12px;border-bottom:1px solid var(--border)}
+tr:hover{background:var(--s2)}
+.tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;font-family:'JetBrains Mono',monospace}
+.tag-hit{background:rgba(34,197,94,.15);color:var(--green)}
+.tag-miss{background:rgba(239,68,68,.15);color:var(--red)}
+.tag-pending{background:rgba(250,204,21,.15);color:var(--yellow)}
+.tag-bullish{color:var(--green)}
+.tag-bearish{color:var(--red)}
+.empty{text-align:center;padding:60px 20px;color:var(--muted)}
+.empty .big{font-size:48px;margin-bottom:12px}
+.empty h3{font-size:18px;color:var(--text);margin-bottom:8px}
+footer{text-align:center;padding:40px 0;font-size:12px;color:var(--muted)}
+footer a{color:var(--cyan);text-decoration:none}
+@media(max-width:600px){.hero h1{font-size:24px}.stat .value{font-size:18px}}
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="nav">
+<div class="logo">⚡ NERVE</div>
+<div>
+<a href="index.html">Home</a> &nbsp;·&nbsp;
+<a href="nerve.html">Subscribe</a> &nbsp;·&nbsp;
+<a href="results.html">Backtest</a> &nbsp;·&nbsp;
+<a href="live.html" style="color:var(--cyan)">Live</a>
+</div>
+</div>
+
+<div class="hero">
+<h1>📡 <span>Live</span> Signal Tracking</h1>
+<p>Every NERVE signal tracked, graded, and exposed. Updated daily at 6 PM EDT.</p>
+</div>
+
+<!-- Stats Row -->
+<div class="stats-row" id="statsRow">
+<div class="stat"><div class="label">Hit Rate</div><div class="value" id="hitRate">—</div><div class="detail">signals correct</div></div>
+<div class="stat"><div class="label">Signals Graded</div><div class="value" id="totalSignals">—</div><div class="detail">total tracked</div></div>
+<div class="stat"><div class="label">Equity</div><div class="value" id="equity">—</div><div class="detail">from \ start</div></div>
+<div class="stat"><div class="label">Total Return</div><div class="value" id="totalReturn">—</div><div class="detail">vs SPY</div></div>
+</div>
+
+<!-- Equity Chart -->
+<div class="chart-box">
+<h2>📈 Equity Curve — NERVE vs S&P 500</h2>
+<div class="sub">\,000 starting capital · Top-1 signal strategy · Graded after 5 trading days</div>
+<canvas id="equityChart" height="300"></canvas>
+</div>
+
+<!-- Signals Table -->
+<div class="chart-box">
+<h2>📋 Signal History</h2>
+<div class="sub">Most recent signals first · Graded after 5 trading days</div>
+<div id="tableWrap">
+<div class="empty"><div class="big">📡</div><h3>Loading signals...</h3><p>Fetching live data from NERVE servers.</p></div>
+</div>
+</div>
+
+</div>
+
+<footer>
+<div style="font-size:12px;font-weight:700;color:var(--cyan);letter-spacing:3px;margin-bottom:6px">⚡ NERVE</div>
+<div>By <a href="index.html">The Single Source</a> · <a href="https://twitter.com/TheSingleSrc">@TheSingleSrc</a></div>
+<div style="margin-top:10px">© 2026 The Single Source. Not financial advice. Past performance ≠ future results.</div>
+</footer>
+
+<script>
+const API = 'https://thesinglesource.azurewebsites.net/api/scorecard';
+
+let chartInstance = null;
+
+async function loadData() {
+  try {
+    const r = await fetch(API);
+    if (!r.ok) throw new Error('API error');
+    const d = await r.json();
+    renderStats(d);
+    renderChart(d);
+    renderTable(d);
+  } catch (e) {
+    console.error('Failed to load scorecard:', e);
+    document.getElementById('tableWrap').innerHTML =
+      '<div class="empty"><div class="big">🔌</div><h3>Data unavailable</h3><p>Live tracking data is not yet available. Check back after signals have been graded.</p></div>';
+  }
+}
+
+function renderStats(d) {
+  const s = d.summary;
+  const eq = d.equity_curve;
+  if (s) {
+    document.getElementById('hitRate').textContent = (s.overall_hit_rate || 0) + '%';
+    document.getElementById('hitRate').style.color = (s.overall_hit_rate||0) >= 50 ? 'var(--green)' : 'var(--red)';
+    document.getElementById('totalSignals').textContent = s.total_signals_scored || 0;
+  }
+  if (eq) {
+    document.getElementById('equity').textContent = '\$' + (eq.current_capital||10000).toLocaleString(undefined,{maximumFractionDigits:0});
+    const ret = eq.total_return_pct || 0;
+    const retEl = document.getElementById('totalReturn');
+    retEl.textContent = (ret >= 0 ? '+' : '') + ret.toFixed(1) + '%';
+    retEl.style.color = ret >= 0 ? 'var(--green)' : 'var(--red)';
+  }
+}
+
+function renderChart(d) {
+  const eq = d.equity_curve;
+  if (!eq || !eq.curve || eq.curve.length < 2) return;
+
+  const labels = eq.curve.map(p => p.date === 'start' ? 'Start' : p.date);
+  const nerveData = eq.curve.map(p => p.equity);
+
+  // Generate a flat SPY line at  as placeholder (real SPY tracking coming)
+  const spyData = eq.curve.map(() => 10000);
+
+  const ctx = document.getElementById('equityChart').getContext('2d');
+  if (chartInstance) chartInstance.destroy();
+  chartInstance = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        {
+          label: 'NERVE',
+          data: nerveData,
+          borderColor: '#22d3ee',
+          backgroundColor: 'rgba(34,211,238,0.1)',
+          fill: true,
+          tension: 0.3,
+          pointRadius: 3,
+          pointHoverRadius: 6,
+          borderWidth: 2,
+        },
+        {
+          label: 'S&P 500',
+          data: spyData,
+          borderColor: '#71717a',
+          borderDash: [5, 5],
+          fill: false,
+          tension: 0.3,
+          pointRadius: 0,
+          borderWidth: 1.5,
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { labels: { color: '#e4e4e7', font: { family: 'Inter', size: 12 } } },
+        tooltip: {
+          callbacks: {
+            label: ctx => ctx.dataset.label + ': \$' + ctx.parsed.y.toLocaleString(undefined, {maximumFractionDigits: 0})
+          }
+        }
+      },
+      scales: {
+        x: {
+          ticks: { color: '#71717a', font: { size: 10 }, maxTicksLimit: 10 },
+          grid: { color: 'rgba(42,42,58,0.5)' }
+        },
+        y: {
+          ticks: {
+            color: '#71717a',
+            font: { family: 'JetBrains Mono', size: 11 },
+            callback: v => '\$' + v.toLocaleString()
+          },
+          grid: { color: 'rgba(42,42,58,0.5)' }
+        }
+      }
+    }
+  });
+}
+
+function renderTable(d) {
+  const grades = d.grades || [];
+  if (!grades.length) {
+    document.getElementById('tableWrap').innerHTML =
+      '<div class="empty"><div class="big">🕰️</div><h3>No graded signals yet</h3><p>Signals are graded after 5 trading days. First grades will appear once enough time has passed.</p></div>';
+    return;
+  }
+
+  let rows = '';
+  for (const day of grades) {
+    for (const sig of (day.signals || [])) {
+      if (sig.outcome === 'SKIPPED') continue;
+      const outcomeClass = sig.outcome === 'HIT' ? 'tag-hit' : sig.outcome === 'MISS' ? 'tag-miss' : 'tag-pending';
+      const signalClass = sig.signal === 'BULLISH' ? 'tag-bullish' : 'tag-bearish';
+      const chg = sig.change_pct != null ? (sig.change_pct >= 0 ? '+' : '') + sig.change_pct.toFixed(1) + '%' : '—';
+      const chgColor = sig.change_pct > 0 ? 'var(--green)' : sig.change_pct < 0 ? 'var(--red)' : 'var(--muted)';
+      rows += '<tr>' +
+        '<td style="font-weight:700">' + day.signal_date + '</td>' +
+        '<td style="font-family:JetBrains Mono,monospace;font-weight:700">' + sig.ticker + '</td>' +
+        '<td><span class="' + signalClass + '">' + sig.signal + '</span></td>' +
+        '<td>' + (sig.source || '—') + '</td>' +
+        '<td style="font-family:JetBrains Mono,monospace">\$' + (sig.price_at_signal||0).toFixed(2) + '</td>' +
+        '<td style="font-family:JetBrains Mono,monospace;color:' + chgColor + '">' + chg + '</td>' +
+        '<td><span class="tag ' + outcomeClass + '">' + (sig.outcome || 'PENDING') + '</span></td>' +
+        '</tr>';
+    }
+  }
+
+  document.getElementById('tableWrap').innerHTML =
+    '<div style="overflow-x:auto"><table>' +
+    '<thead><tr><th>Date</th><th>Ticker</th><th>Signal</th><th>Source</th><th>Entry</th><th>Return</th><th>Result</th></tr></thead>' +
+    '<tbody>' + rows + '</tbody></table></div>';
+}
+
+loadData();
+</script>
+</body>
+</html>
