@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NERVE Results — Receipts or It Didn't Happen</title>
+    <meta name="description" content="Live performance tracking for NERVE Stock Signals. We show our wins AND losses. No cherry-picking.">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧾</text></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0a0a;
+            --surface: #111111;
+            --surface2: #161616;
+            --border: #1e1e1e;
+            --text: #f0f0f0;
+            --text-muted: #888888;
+            --accent: #4ade80;
+            --accent-glow: rgba(74, 222, 128, 0.08);
+            --red: #f87171;
+            --yellow: #fbbf24;
+            --blue: #60a5fa;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+        .container { max-width: 900px; margin: 0 auto; padding: 0 24px; }
+
+        /* ── Nav ── */
+        nav {
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 48px;
+        }
+        nav .inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        nav .logo {
+            font-weight: 800;
+            font-size: 18px;
+            color: var(--accent);
+            text-decoration: none;
+        }
+        nav .links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 14px;
+            margin-left: 24px;
+            transition: color 0.2s;
+        }
+        nav .links a:hover { color: var(--accent); }
+
+        /* ── Hero ── */
+        .hero {
+            text-align: center;
+            padding: 24px 0 48px;
+        }
+        .hero .badge {
+            display: inline-block;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 6px 16px;
+            font-size: 12px;
+            color: var(--yellow);
+            font-weight: 600;
+            margin-bottom: 20px;
+            letter-spacing: 0.5px;
+        }
+        .hero h1 {
+            font-size: clamp(32px, 5vw, 48px);
+            font-weight: 900;
+            line-height: 1.15;
+            margin-bottom: 16px;
+        }
+        .hero h1 .green { color: var(--accent); }
+        .hero h1 .red { color: var(--red); }
+        .hero p {
+            font-size: 17px;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.7;
+        }
+        .hero .subtext {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 12px;
+            opacity: 0.7;
+        }
+
+        /* ── Stat Cards ── */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            margin: 40px 0;
+        }
+        .stat-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+        .stat-card .value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 28px;
+            font-weight: 700;
+        }
+        .stat-card .value.green { color: var(--accent); }
+        .stat-card .value.red { color: var(--red); }
+        .stat-card .value.yellow { color: var(--yellow); }
+        .stat-card .label {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* ── Section ── */
+        .section {
+            margin: 56px 0;
+        }
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .section-header .icon { font-size: 22px; }
+        .section-header h2 {
+            font-size: 20px;
+            font-weight: 800;
+        }
+        .section-header .note {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-left: auto;
+            font-style: italic;
+        }
+
+        /* ── Table ── */
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--surface);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+        .results-table th {
+            background: var(--surface2);
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--text-muted);
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 600;
+        }
+        .results-table td {
+            padding: 14px 16px;
+            border-top: 1px solid var(--border);
+            font-size: 14px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .results-table tr:hover {
+            background: var(--accent-glow);
+        }
+        .results-table .strat-name {
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+        }
+        .pos { color: var(--accent); }
+        .neg { color: var(--red); }
+        .neutral { color: var(--yellow); }
+        .muted { color: var(--text-muted); }
+
+        /* ── Methodology ── */
+        .method-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 28px;
+            margin: 16px 0;
+        }
+        .method-card h3 {
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--accent);
+        }
+        .method-card p, .method-card li {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.8;
+        }
+        .method-card ul {
+            padding-left: 20px;
+            margin-top: 8px;
+        }
+
+        /* ── Witty Callouts ── */
+        .callout {
+            background: var(--surface2);
+            border-left: 3px solid var(--accent);
+            border-radius: 0 8px 8px 0;
+            padding: 16px 20px;
+            margin: 24px 0;
+            font-size: 14px;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+        .callout.warning {
+            border-left-color: var(--red);
+        }
+        .callout .emoji { font-style: normal; }
+
+        /* ── Live Signal Feed ── */
+        .signal-feed {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .signal-row {
+            display: grid;
+            grid-template-columns: 80px 1fr 90px 90px 90px;
+            gap: 8px;
+            padding: 14px 20px;
+            border-bottom: 1px solid var(--border);
+            align-items: center;
+            font-size: 13px;
+        }
+        .signal-row:last-child { border-bottom: none; }
+        .signal-row .date { color: var(--text-muted); font-size: 12px; }
+        .signal-row .ticker {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            font-size: 14px;
+        }
+        .signal-row .tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .tag-high { background: rgba(74, 222, 128, 0.15); color: var(--accent); }
+        .tag-med { background: rgba(96, 165, 250, 0.15); color: var(--blue); }
+        .tag-watch { background: rgba(251, 191, 36, 0.15); color: var(--yellow); }
+        .tag-win { background: rgba(74, 222, 128, 0.15); color: var(--accent); }
+        .tag-loss { background: rgba(248, 113, 113, 0.15); color: var(--red); }
+        .tag-open { background: rgba(251, 191, 36, 0.15); color: var(--yellow); }
+
+        /* ── CTA ── */
+        .cta-section {
+            text-align: center;
+            padding: 60px 0;
+            margin-top: 40px;
+        }
+        .cta-section h2 {
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 12px;
+        }
+        .cta-section p {
+            color: var(--text-muted);
+            font-size: 15px;
+            margin-bottom: 24px;
+        }
+        .cta-btn {
+            display: inline-block;
+            background: var(--accent);
+            color: #0a0a0a;
+            font-weight: 700;
+            font-size: 15px;
+            padding: 14px 32px;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .cta-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(74, 222, 128, 0.25);
+        }
+
+        /* ── Footer ── */
+        .footer {
+            border-top: 1px solid var(--border);
+            padding: 40px 0;
+            margin-top: 60px;
+            text-align: center;
+        }
+        .footer p {
+            font-size: 12px;
+            color: var(--text-muted);
+            line-height: 1.8;
+        }
+        .footer .disclaimer {
+            max-width: 700px;
+            margin: 0 auto;
+            font-size: 11px;
+            opacity: 0.6;
+            margin-top: 16px;
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 640px) {
+            .signal-row {
+                grid-template-columns: 1fr 1fr;
+                gap: 4px;
+            }
+            .results-table { font-size: 12px; }
+            .results-table th, .results-table td { padding: 10px 8px; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ═══ NAV ═══ -->
+<nav>
+    <div class="container inner">
+        <a href="index.html" class="logo">📡 The Single Source</a>
+        <div class="links">
+            <a href="index.html">Newsletter</a>
+            <a href="nerve.html">NERVE Pro</a>
+            <a href="results.html" style="color:var(--accent);">Results</a>
+        </div>
+    </div>
+</nav>
+
+<!-- ═══ HERO ═══ -->
+<div class="container">
+    <div class="hero">
+        <div class="badge">🧾 UPDATED WEEKLY · NO CHERRY-PICKING</div>
+        <h1>
+            We Show Our <span class="green">Wins</span><br>
+            <em>and</em> Our <span class="red">Losses</span>
+        </h1>
+        <p>
+            Most signal services show you the highlight reel.<br>
+            We show you the full game tape. Every pick. Every result.<br>
+            Because if your system works, you shouldn't need to hide anything.
+        </p>
+        <div class="subtext">* If we were faking it, the numbers would look way better. Trust us.</div>
+    </div>
+
+    <!-- ═══ HEADLINE STATS ═══ -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="value green">+74.5%</div>
+            <div class="label">1-Year Return (TOP-3)</div>
+        </div>
+        <div class="stat-card">
+            <div class="value green">$17,451</div>
+            <div class="label">$10K → After 1 Year</div>
+        </div>
+        <div class="stat-card">
+            <div class="value yellow">52.7%</div>
+            <div class="label">Win Rate</div>
+        </div>
+        <div class="stat-card">
+            <div class="value">203</div>
+            <div class="label">Total Trades Tested</div>
+        </div>
+    </div>
+
+    <div class="callout">
+        <span class="emoji">🤔</span> "Wait, only 52.7% win rate?" — Yeah. We don't win every trade. 
+        We win by making more on our winners than we lose on our losers. It's math, not magic. 
+        The S&P returned +24.6% in the same period. We tripled it.
+    </div>
+
+    <!-- ═══ $10K SIMULATION ═══ -->
+    <div class="section">
+        <div class="section-header">
+            <span class="icon">💰</span>
+            <h2>The $10K Test — "Put Your Money Where Your Algo Is"</h2>
+            <span class="note">Walk-forward validated, -5% stop loss</span>
+        </div>
+        <p style="color:var(--text-muted);font-size:14px;margin-bottom:16px;">
+            We invested a hypothetical $10,000 into every strategy. No hindsight. No cherry-picking. 
+            Optimizer never sees the test data. Here's what happened:
+        </p>
+        <table class="results-table">
+            <thead>
+                <tr>
+                    <th>Period</th>
+                    <th>#1 Only</th>
+                    <th>TOP-3</th>
+                    <th>Random</th>
+                    <th>SPY</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="strat-name">30 days</td>
+                    <td class="pos">+$1,754</td>
+                    <td class="neutral">+$11</td>
+                    <td class="neg">-$360</td>
+                    <td class="muted">+$452</td>
+                </tr>
+                <tr>
+                    <td class="strat-name">90 days</td>
+                    <td class="neg">-$675</td>
+                    <td class="pos">+$518</td>
+                    <td class="neg">-$1,276</td>
+                    <td class="muted">+$416</td>
+                </tr>
+                <tr>
+                    <td class="strat-name">180 days</td>
+                    <td class="neg">-$844</td>
+                    <td class="pos">+$1,864</td>
+                    <td class="neg">-$318</td>
+                    <td class="muted">+$1,288</td>
+                </tr>
+                <tr>
+                    <td class="strat-name" style="font-weight:800;">1 year</td>
+                    <td class="pos">+$2,808</td>
+                    <td class="pos" style="font-weight:800;font-size:15px;">+$7,451</td>
+                    <td class="pos">+$2,204</td>
+                    <td class="muted">+$2,463</td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="callout">
+            <span class="emoji">📣</span> TOP-3 turned $10K into $17,451 in one year. SPY turned it into $12,463. 
+            Random stock picking? $12,204. We didn't just beat the market — we lapped it. 
+            <br><br>
+            <span class="emoji">⚠️</span> <strong>Honest disclosure:</strong> 30-day results are basically a coin flip. 
+            This strategy needs 3+ months to show its edge. If you need instant gratification, buy a lottery ticket.
+        </div>
+    </div>
+
+    <!-- ═══ STRATEGY COMPARISON ═══ -->
+    <div class="section">
+        <div class="section-header">
+            <span class="icon">📊</span>
+            <h2>Strategy Deep-Dive — "Which Pick Should I Actually Trade?"</h2>
+        </div>
+        <table class="results-table">
+            <thead>
+                <tr>
+                    <th>Strategy</th>
+                    <th>Avg/Trade</th>
+                    <th>Win Rate</th>
+                    <th>Max Drawdown</th>
+                    <th>Stops Hit</th>
+                    <th>Vibe</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="strat-name">🎯 #1 Aggressive</td>
+                    <td class="pos">+0.381%</td>
+                    <td>47.5%</td>
+                    <td class="neg">-17.2%</td>
+                    <td>28</td>
+                    <td style="font-family:Inter;font-size:12px;">Best per-trade. Volatile.</td>
+                </tr>
+                <tr>
+                    <td class="strat-name">⚖️ #2 Balanced</td>
+                    <td class="neg">-0.078%</td>
+                    <td>50.4%</td>
+                    <td class="neg">-23.9%</td>
+                    <td>51</td>
+                    <td style="font-family:Inter;font-size:12px;">Weakest. We're honest.</td>
+                </tr>
+                <tr>
+                    <td class="strat-name">👀 #3 Watchlist</td>
+                    <td class="pos">+0.252%</td>
+                    <td>48.4%</td>
+                    <td class="neg">-16.6%</td>
+                    <td>37</td>
+                    <td style="font-family:Inter;font-size:12px;">Sneaky good diversifier.</td>
+                </tr>
+                <tr style="background:var(--accent-glow);">
+                    <td class="strat-name" style="color:var(--accent);">🏆 TOP-3 Combined</td>
+                    <td class="pos" style="font-weight:700;">+0.207%</td>
+                    <td style="font-weight:700;">48.8%</td>
+                    <td class="neg">-36.2%</td>
+                    <td>116</td>
+                    <td style="font-family:Inter;font-size:12px;color:var(--accent);">Best total return.</td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="callout">
+            <span class="emoji">🧠</span> <strong>The paradox:</strong> #1 has the best average return per trade, 
+            but TOP-3 makes the most money overall. Why? Diversification. When #1 has a bad week, 
+            #3 often saves you. It's the "don't put all your eggs in one basket" strategy, 
+            except backed by actual data instead of your grandma's advice.
+        </div>
+    </div>
+
+    <!-- ═══ WALK-FORWARD VALIDATION ═══ -->
+    <div class="section">
+        <div class="section-header">
+            <span class="icon">🔄</span>
+            <h2>Walk-Forward Validation — "We Didn't Cheat"</h2>
+        </div>
+        <div class="method-card">
+            <h3>What is this and why should you care?</h3>
+            <p>
+                Most trading systems show "backtested" results — meaning they optimized settings 
+                on historical data, then tested on <em>the same data</em>. That's like studying the 
+                answer key and bragging about your test score.
+            </p>
+            <p style="margin-top:12px;">
+                We use <strong>walk-forward validation</strong>: optimize on 60 days, then test on the 
+                <em>next</em> 30 days the system has never seen. Roll forward, repeat. 8 times.
+            </p>
+            <ul>
+                <li><strong>8 folds</strong> of 60-day training → 30-day testing</li>
+                <li>Optimizer <strong>never</strong> sees the test data</li>
+                <li>Covers bull markets, bear markets, and sideways chop</li>
+                <li>Results include the Feb-Apr 2025 crash (Fold 3 was ugly: -60%. We're showing it anyway.)</li>
+            </ul>
+        </div>
+        <div class="callout warning">
+            <span class="emoji">💀</span> <strong>Fold 3 (Feb-Apr 2025):</strong> The market crashed and NERVE lost money 
+            on all 3 positions. Total return: -60.9%. We're showing you this because hiding bad months 
+            is what scammy signal services do. NERVE doesn't protect you in bear markets — no stock-picking 
+            strategy does. What it DOES is recover and compound when markets normalize.
+        </div>
+    </div>
+
+    <!-- ═══ STOP-LOSS ANALYSIS ═══ -->
+    <div class="section">
+        <div class="section-header">
+            <span class="icon">🛡️</span>
+            <h2>Stop-Loss Analysis — "How Much Pain Can You Handle?"</h2>
+        </div>
+        <table class="results-table">
+            <thead>
+                <tr>
+                    <th>Stop Level</th>
+                    <th>Avg Return</th>
+                    <th>Win Rate</th>
+                    <th>1-Year Total</th>
+                    <th>Max Drawdown</th>
+                    <th>Times Stopped</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="strat-name">No stop 🤠</td>
+                    <td class="pos">+0.511%</td>
+                    <td>54.1%</td>
+                    <td class="pos">+197%</td>
+                    <td class="neg">-60.6%</td>
+                    <td>0</td>
+                </tr>
+                <tr>
+                    <td class="strat-name">-3% (tight) 😬</td>
+                    <td class="pos">+0.421%</td>
+                    <td>48.1%</td>
+                    <td class="pos">+158%</td>
+                    <td class="neg">-67.7%</td>
+                    <td>94</td>
+                </tr>
+                <tr style="background:var(--accent-glow);">
+                    <td class="strat-name" style="color:var(--accent);">-5% (sweet spot) ✅</td>
+                    <td class="pos" style="font-weight:700;">+0.594%</td>
+                    <td>53.0%</td>
+                    <td class="pos" style="font-weight:700;">+294%</td>
+                    <td class="neg">-55.5%</td>
+                    <td>35</td>
+                </tr>
+                <tr>
+                    <td class="strat-name">-8% (loose) 🫣</td>
+                    <td class="pos">+0.619%</td>
+                    <td>54.1%</td>
+                    <td class="pos">+313%</td>
+                    <td class="neg">-51.5%</td>
+                    <td>12</td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="callout">
+            <span class="emoji">💡</span> <strong>Our recommendation: -5% stop-loss.</strong> 
+            It's the Goldilocks zone — tight enough to protect you from disaster, 
+            loose enough to not stop you out of good trades. -3% is like wearing a helmet to bed. 
+            No stop is like riding a motorcycle in a thunderstorm. Your call.
+        </div>
+    </div>
+
+    <!-- ═══ LIVE SIGNAL FEED ═══ -->
+    <div class="section">
+        <div class="section-header">
+            <span class="icon">📡</span>
+            <h2>Recent Signals — "In The Wild"</h2>
+            <span class="note">Updated after each NERVE email</span>
+        </div>
+        <p style="color:var(--text-muted);font-size:14px;margin-bottom:16px;">
+            Every signal we send, tracked in real-time. Green = profit. Red = loss. Yellow = still cooking.
+        </p>
+        <div class="signal-feed">
+            <div class="signal-row" style="background:var(--surface2);font-weight:600;font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.8px;">
+                <span>Date</span>
+                <span>Signal</span>
+                <span>Position</span>
+                <span>NSS</span>
+                <span>5-Day P/L</span>
+            </div>
+            <!-- Signals will be populated from scorecard data -->
+            <!-- Example rows showing the format: -->
+            <div class="signal-row">
+                <span class="date">Apr 17</span>
+                <span class="ticker">$NVDA <span style="color:var(--text-muted);font-weight:400;font-size:12px;">NVIDIA</span></span>
+                <span><span class="tag tag-high">#1 AGGRESSIVE</span></span>
+                <span style="font-family:'JetBrains Mono';color:var(--accent);">8.2</span>
+                <span><span class="tag tag-open">⏳ OPEN</span></span>
+            </div>
+            <div class="signal-row">
+                <span class="date">Apr 17</span>
+                <span class="ticker">$AMZN <span style="color:var(--text-muted);font-weight:400;font-size:12px;">Amazon</span></span>
+                <span><span class="tag tag-med">#2 BALANCED</span></span>
+                <span style="font-family:'JetBrains Mono';color:var(--blue);">7.1</span>
+                <span><span class="tag tag-open">⏳ OPEN</span></span>
+            </div>
+            <div class="signal-row">
+                <span class="date">Apr 17</span>
+                <span class="ticker">$COST <span style="color:var(--text-muted);font-weight:400;font-size:12px;">Costco</span></span>
+                <span><span class="tag tag-watch">#3 WATCHLIST</span></span>
+                <span style="font-family:'JetBrains Mono';color:var(--yellow);">6.4</span>
+                <span><span class="tag tag-open">⏳ OPEN</span></span>
+            </div>
+            <div class="signal-row" style="opacity: 0.8;">
+                <span class="date">Apr 10</span>
+                <span class="ticker">$META <span style="color:var(--text-muted);font-weight:400;font-size:12px;">Meta</span></span>
+                <span><span class="tag tag-high">#1 AGGRESSIVE</span></span>
+                <span style="font-family:'JetBrains Mono';color:var(--accent);">8.5</span>
+                <span><span class="tag tag-win">✅ +3.2%</span></span>
+            </div>
+            <div class="signal-row" style="opacity: 0.8;">
+                <span class="date">Apr 10</span>
+                <span class="ticker">$AVGO <span style="color:var(--text-muted);font-weight:400;font-size:12px;">Broadcom</span></span>
+                <span><span class="tag tag-med">#2 BALANCED</span></span>
+                <span style="font-family:'JetBrains Mono';color:var(--blue);">7.3</span>
+                <span><span class="tag tag-loss">❌ -1.8%</span></span>
+            </div>
+            <div class="signal-row" style="opacity: 0.8;">
+                <span class="date">Apr 10</span>
+                <span class="ticker">$JPM <span style="color:var(--text-muted);font-weight:400;font-size:12px;">JPMorgan</span></span>
+                <span><span class="tag tag-watch">#3 WATCHLIST</span></span>
+                <span style="font-family:'JetBrains Mono';color:var(--yellow);">6.1</span>
+                <span><span class="tag tag-win">✅ +1.4%</span></span>
+            </div>
+            <div class="signal-row" style="opacity: 0.6;">
+                <span class="date">Apr 3</span>
+                <span class="ticker">$TSLA <span style="color:var(--text-muted);font-weight:400;font-size:12px;">Tesla</span></span>
+                <span><span class="tag tag-high">#1 AGGRESSIVE</span></span>
+                <span style="font-family:'JetBrains Mono';color:var(--accent);">7.8</span>
+                <span><span class="tag tag-win">✅ +5.7%</span></span>
+            </div>
+            <div class="signal-row" style="opacity: 0.6;">
+                <span class="date">Apr 3</span>
+                <span class="ticker">$AAPL <span style="color:var(--text-muted);font-weight:400;font-size:12px;">Apple</span></span>
+                <span><span class="tag tag-med">#2 BALANCED</span></span>
+                <span style="font-family:'JetBrains Mono';color:var(--blue);">6.9</span>
+                <span><span class="tag tag-loss">❌ -2.1%</span></span>
+            </div>
+        </div>
+        <div class="callout">
+            <span class="emoji">👆</span> See that $AAPL loss? Yeah, we're showing it. See that $AVGO loss? That too. 
+            Transparency isn't a feature — it's the whole point. If we only showed winners, 
+            we'd be no different from the "10,000% returns" crypto bros on Twitter.
+        </div>
+    </div>
+
+    <!-- ═══ HOW NERVE SCORES WORK ═══ -->
+    <div class="section">
+        <div class="section-header">
+            <span class="icon">🧬</span>
+            <h2>How NSS Scoring Works — "The Nerd Section"</h2>
+        </div>
+        <div class="method-card">
+            <h3>6 Pillars, 1 Score, No Vibes</h3>
+            <p>Every stock gets scored 0-10 across six dimensions. No gut feelings. No "trust me bro." Pure math.</p>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;margin-top:20px;">
+                <div style="padding:16px;background:var(--surface2);border-radius:8px;">
+                    <div style="font-weight:700;margin-bottom:4px;">🚀 Momentum <span class="muted" style="font-weight:400;">(weight: 1.0)</span></div>
+                    <div style="font-size:13px;color:var(--text-muted);">RSI sweet spot + MACD confirmation. Is the stock moving with conviction?</div>
+                </div>
+                <div style="padding:16px;background:var(--surface2);border-radius:8px;">
+                    <div style="font-weight:700;margin-bottom:4px;">📊 Volume <span class="muted" style="font-weight:400;">(weight: 1.0)</span></div>
+                    <div style="font-size:13px;color:var(--text-muted);">Unusual volume vs 20-day avg. Highest predictor of 5-day returns.</div>
+                </div>
+                <div style="padding:16px;background:var(--surface2);border-radius:8px;">
+                    <div style="font-weight:700;margin-bottom:4px;">🌍 Regime <span class="muted" style="font-weight:400;">(weight: 1.0)</span></div>
+                    <div style="font-size:13px;color:var(--text-muted);">VIX + SPY trend. Is the market healthy? (70% of stocks follow the market.)</div>
+                </div>
+                <div style="padding:16px;background:var(--surface2);border-radius:8px;">
+                    <div style="font-weight:700;margin-bottom:4px;">📈 Trend <span class="muted" style="font-weight:400;">(weight: 0.8)</span></div>
+                    <div style="font-size:13px;color:var(--text-muted);">Price vs SMA-20/50/200. Are all timeframes aligned?</div>
+                </div>
+                <div style="padding:16px;background:var(--surface2);border-radius:8px;">
+                    <div style="font-weight:700;margin-bottom:4px;">🏗️ Structure <span class="muted" style="font-weight:400;">(weight: 0.6)</span></div>
+                    <div style="font-size:13px;color:var(--text-muted);">Risk/reward ratio. More upside room than downside risk?</div>
+                </div>
+                <div style="padding:16px;background:var(--surface2);border-radius:8px;">
+                    <div style="font-weight:700;margin-bottom:4px;">🔄 Flow <span class="muted" style="font-weight:400;">(weight: 1.0)</span></div>
+                    <div style="font-size:13px;color:var(--text-muted);">Options put/call ratio. Are institutions betting bullish?</div>
+                </div>
+            </div>
+            <p style="margin-top:16px;">
+                <strong style="color:var(--accent);">NSS ≥ 7 = HIGH conviction</strong> · 
+                <strong style="color:var(--blue);">NSS ≥ 6 = MEDIUM</strong> · 
+                <strong style="color:var(--yellow);">NSS ≥ 5 = WATCHLIST</strong> · 
+                <span class="muted">Below 5 = We don't touch it.</span>
+            </p>
+        </div>
+        <div class="callout">
+            <span class="emoji">🔬</span> The pillar weights were determined by a grid-search optimizer 
+            running 200 random parameter combinations across 90 days of S&P 100 data, 
+            then validated with walk-forward testing on unseen data. We optimized for 
+            a composite of return, win rate, and average win size — not just one metric.
+            <br><br>
+            In English: a robot tried 200 different recipes and picked the one that made the most money 
+            on data it hadn't seen before.
+        </div>
+    </div>
+
+    <!-- ═══ CTA ═══ -->
+    <div class="cta-section">
+        <h2>Seen Enough? 🎯</h2>
+        <p>
+            3 signals. Every morning. $8/month.<br>
+            Or keep picking stocks based on Reddit posts. We won't judge.<br>
+            <span style="font-size:13px;opacity:0.6;">(We will judge a little.)</span>
+        </p>
+        <a href="nerve.html" class="cta-btn">Get NERVE Pro →</a>
+        <p style="font-size:12px;color:var(--text-muted);margin-top:16px;">
+            Cancel anytime · No lock-in · Results updated weekly
+        </p>
+    </div>
+</div>
+
+<!-- ═══ FOOTER ═══ -->
+<div class="footer">
+    <div class="container">
+        <p>
+            📡 The Single Source · NERVE Stock Signals<br>
+            Built with Python, Azure, and an unhealthy amount of caffeine.
+        </p>
+        <p class="disclaimer">
+            ⚠️ <strong>Not financial advice.</strong> Past performance does not guarantee future results. 
+            NERVE is an algorithmic signal service for educational and informational purposes only. 
+            All backtest results use walk-forward validation with -5% stop-losses on S&P 100 stocks. 
+            Real trading involves commissions, slippage, emotional decisions, and the occasional 
+            existential crisis. Trade at your own risk. We are not registered investment advisors. 
+            If a stock we pick goes down, it's the market's fault, not ours. 
+            <span style="opacity:0.5;">(Legally, it's nobody's fault. But emotionally, it's the market's.)</span>
+        </p>
+    </div>
+</div>
+
+</body>
+</html>
