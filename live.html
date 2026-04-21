@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Live Tracking — NERVE by The Single Source</title>
+<title>Live Tracking &#8212; NERVE by The Single Source</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=JetBrains+Mono:wght@400;700;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 <style>
-:root{--bg:#0a0a0f;--s1:#111118;--s2:#1a1a24;--border:#2a2a3a;--text:#e4e4e7;--muted:#71717a;--cyan:#22d3ee;--green:#22c55e;--red:#ef4444;--yellow:#facc15;--blue:#60a5fa}
+:root{--bg:#0a0a0f;--s1:#111118;--s2:#1a1a24;--border:#2a2a3a;--text:#e4e4e7;--muted:#71717a;--cyan:#22d3ee;--green:#22c55e;--red:#ef4444;--yellow:#facc15;--blue:#60a5fa;--orange:#f97316}
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
-.container{max-width:1000px;margin:0 auto;padding:24px 20px}
+.container{max-width:1060px;margin:0 auto;padding:24px 20px}
 .nav{display:flex;align-items:center;justify-content:space-between;padding:16px 0;border-bottom:1px solid var(--border);margin-bottom:32px}
 .nav a{color:var(--muted);text-decoration:none;font-size:13px;font-weight:600;transition:color .2s}
 .nav a:hover{color:var(--cyan)}
@@ -20,220 +20,262 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .hero h1{font-size:32px;font-weight:900;margin-bottom:8px}
 .hero h1 span{color:var(--cyan)}
 .hero p{color:var(--muted);font-size:14px}
-.chart-box{background:var(--s1);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:32px}
-.chart-box h2{font-size:16px;font-weight:800;margin-bottom:4px}
-.chart-box .sub{font-size:12px;color:var(--muted);margin-bottom:16px}
-.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:32px}
+.section{background:var(--s1);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:24px}
+.section h2{font-size:16px;font-weight:800;margin-bottom:4px}
+.section .sub{font-size:12px;color:var(--muted);margin-bottom:16px}
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin-bottom:24px}
 .stat{background:var(--s1);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center}
 .stat .label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;font-weight:700}
-.stat .value{font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:900;margin-top:4px}
+.stat .value{font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:900;margin-top:4px}
 .stat .detail{font-size:11px;color:var(--muted);margin-top:2px}
-table{width:100%;border-collapse:collapse;font-size:13px}
-th{text-align:left;padding:10px 12px;border-bottom:2px solid var(--border);color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:0.5px;font-weight:700}
-td{padding:10px 12px;border-bottom:1px solid var(--border)}
-tr:hover{background:var(--s2)}
-.tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;font-family:'JetBrains Mono',monospace}
+.tag{display:inline-block;padding:3px 10px;border-radius:6px;font-size:11px;font-weight:700;font-family:'JetBrains Mono',monospace;white-space:nowrap}
 .tag-hit{background:rgba(34,197,94,.15);color:var(--green)}
 .tag-miss{background:rgba(239,68,68,.15);color:var(--red)}
-.tag-pending{background:rgba(250,204,21,.15);color:var(--yellow)}
-.tag-bullish{color:var(--green)}
-.tag-bearish{color:var(--red)}
+.tag-open{background:rgba(250,204,21,.15);color:var(--yellow)}
+.tag-expired{background:rgba(113,113,122,.15);color:var(--muted)}
+.tag-bullish{background:rgba(34,197,94,.1);color:var(--green)}
+.tag-bearish{background:rgba(239,68,68,.1);color:var(--red)}
+.tag-high{background:rgba(34,211,238,.12);color:var(--cyan)}
+.tag-med{background:rgba(250,204,21,.12);color:var(--yellow)}
+.tag-watch{background:rgba(249,115,22,.12);color:var(--orange)}
+.signal-card{background:var(--s2);border:1px solid var(--border);border-radius:12px;padding:16px 18px;margin-bottom:10px;transition:border-color .2s}
+.signal-card:hover{border-color:#3a3a4a}
+.signal-card .card-header{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px}
+.signal-card .ticker{font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:900;color:var(--text)}
+.signal-card .price{font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--muted)}
+.signal-card .change{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700}
+.signal-card .catalyst{font-size:12px;color:var(--muted);line-height:1.5;margin-bottom:8px}
+.signal-card .card-footer{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:11px;color:var(--muted)}
+.signal-card .levels{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:8px 0;font-size:11px}
+.signal-card .level-box{background:var(--s1);border-radius:8px;padding:8px;text-align:center}
+.signal-card .level-box .lbl{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1px}
+.signal-card .level-box .val{font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:900;margin-top:2px}
+.highlight-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
+.highlight-card{background:var(--s1);border:1px solid var(--border);border-radius:12px;padding:18px}
+.highlight-card h3{font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px}
+.highlight-item{display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px}
+.highlight-item:last-child{border-bottom:none}
+.tabs{display:flex;gap:4px;margin-bottom:16px}
+.tab{padding:8px 16px;border-radius:8px;font-size:12px;font-weight:700;color:var(--muted);background:transparent;border:1px solid transparent;cursor:pointer;transition:all .2s}
+.tab:hover{color:var(--text)}
+.tab.active{background:var(--s2);color:var(--cyan);border-color:var(--border)}
 .empty{text-align:center;padding:60px 20px;color:var(--muted)}
 .empty .big{font-size:48px;margin-bottom:12px}
 .empty h3{font-size:18px;color:var(--text);margin-bottom:8px}
 footer{text-align:center;padding:40px 0;font-size:12px;color:var(--muted)}
 footer a{color:var(--cyan);text-decoration:none}
-@media(max-width:600px){.hero h1{font-size:24px}.stat .value{font-size:18px}}
+@media(max-width:700px){.hero h1{font-size:22px}.stat .value{font-size:18px}.highlight-row{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 <div class="container">
-
 <div class="nav">
-<div class="logo">⚡ NERVE</div>
+<div class="logo">&#9889; NERVE</div>
 <div>
-<a href="index.html">Home</a> &nbsp;·&nbsp;
-<a href="nerve.html">Subscribe</a> &nbsp;·&nbsp;
-<a href="results.html">Backtest</a> &nbsp;·&nbsp;
+<a href="index.html">Home</a> &nbsp;&middot;&nbsp;
+<a href="nerve.html">Subscribe</a> &nbsp;&middot;&nbsp;
+<a href="results.html">Backtest</a> &nbsp;&middot;&nbsp;
 <a href="live.html" style="color:var(--cyan)">Live</a>
 </div>
 </div>
 
 <div class="hero">
-<h1>📡 <span>Live</span> Signal Tracking</h1>
-<p>Every NERVE signal tracked, graded, and exposed. Updated daily at 6 PM EDT.</p>
+<h1>&#128225; <span>Live</span> Signal Scorecard</h1>
+<p>Every NERVE signal tracked, graded, and exposed. No cherry-picking. No hiding losses.</p>
 </div>
 
-<!-- Stats Row -->
 <div class="stats-row" id="statsRow">
-<div class="stat"><div class="label">Hit Rate</div><div class="value" id="hitRate">—</div><div class="detail">signals correct</div></div>
-<div class="stat"><div class="label">Signals Graded</div><div class="value" id="totalSignals">—</div><div class="detail">total tracked</div></div>
-<div class="stat"><div class="label">Equity</div><div class="value" id="equity">—</div><div class="detail">from \ start</div></div>
-<div class="stat"><div class="label">Total Return</div><div class="value" id="totalReturn">—</div><div class="detail">vs SPY</div></div>
+<div class="stat"><div class="label">Hit Rate</div><div class="value" id="hitRate">&mdash;</div><div class="detail" id="hitDetail">&mdash;</div></div>
+<div class="stat"><div class="label">Signals Graded</div><div class="value" id="totalSignals">&mdash;</div><div class="detail" id="pendingCount">&mdash;</div></div>
+<div class="stat"><div class="label">Equity</div><div class="value" id="equity">&mdash;</div><div class="detail">$10K start</div></div>
+<div class="stat"><div class="label">NERVE Return</div><div class="value" id="totalReturn">&mdash;</div><div class="detail" id="spyReturn">vs SPY: &mdash;</div></div>
+<div class="stat"><div class="label">Streak</div><div class="value" id="streak">&mdash;</div><div class="detail" id="streakDetail">&mdash;</div></div>
+<div class="stat"><div class="label">Days Tracked</div><div class="value" id="daysTracked">&mdash;</div><div class="detail">and counting</div></div>
 </div>
 
-<!-- Equity Chart -->
-<div class="chart-box">
-<h2>📈 Equity Curve — NERVE vs S&P 500</h2>
-<div class="sub">\,000 starting capital · Top-3 combined strategy · Graded after 5 trading days</div>
+<div class="highlight-row" id="highlightsRow" style="display:none">
+<div class="highlight-card">
+<h3 style="color:var(--green)">&#127942; Best Calls</h3>
+<div id="bestCalls"></div>
+</div>
+<div class="highlight-card">
+<h3 style="color:var(--red)">&#128128; Worst Calls</h3>
+<div id="worstCalls"></div>
+</div>
+</div>
+
+<div class="section">
+<h2>&#128200; Equity Curve &mdash; NERVE vs S&amp;P 500</h2>
+<div class="sub">$10,000 starting capital &middot; Top-3 combined strategy &middot; Graded after 5 trading days</div>
 <div style="position:relative;height:280px;width:100%"><canvas id="equityChart"></canvas></div>
 </div>
 
-<!-- Signals Table -->
-<div class="chart-box">
-<h2>📋 Signal History</h2>
-<div class="sub">Most recent signals first · Graded after 5 trading days</div>
-<div id="tableWrap">
-<div class="empty"><div class="big">📡</div><h3>Loading signals...</h3><p>Fetching live data from NERVE servers.</p></div>
+<div class="section">
+<h2>&#128203; Signal Scorecard</h2>
+<div class="sub">Every signal we have ever sent. Graded after 5 trading days.</div>
+<div class="tabs">
+<button class="tab active" data-filter="all" onclick="filterTab(this)">All</button>
+<button class="tab" data-filter="open" onclick="filterTab(this)">&#127312; Open</button>
+<button class="tab" data-filter="hit" onclick="filterTab(this)">&#9989; Hit</button>
+<button class="tab" data-filter="miss" onclick="filterTab(this)">&#10060; Miss</button>
+</div>
+<div id="signalCards">
+<div class="empty"><div class="big">&#128225;</div><h3>Loading signals...</h3><p>Fetching live data from NERVE servers.</p></div>
 </div>
 </div>
 
 </div>
 
 <footer>
-<div style="font-size:12px;font-weight:700;color:var(--cyan);letter-spacing:3px;margin-bottom:6px">⚡ NERVE</div>
-<div>By <a href="index.html">The Single Source</a> · <a href="https://twitter.com/TheSingleSrc">@TheSingleSrc</a></div>
-<div style="margin-top:10px">© 2026 The Single Source. Not financial advice. Past performance ≠ future results.</div>
+<div style="font-size:12px;font-weight:700;color:var(--cyan);letter-spacing:3px;margin-bottom:6px">&#9889; NERVE</div>
+<div>By <a href="index.html">The Single Source</a> &middot; <a href="https://twitter.com/TheSingleSrc">@TheSingleSrc</a></div>
+<div style="margin-top:10px">&copy; 2026 The Single Source. Not financial advice. Past performance &#8800; future results.</div>
 </footer>
 
 <script>
-const API = 'https://thesinglesource.azurewebsites.net/api/scorecard';
+const API='https://thesinglesource.azurewebsites.net/api/scorecard';
+let chartInstance=null;
+let allSignals=[];
 
-let chartInstance = null;
-
-async function loadData() {
-  try {
-    const r = await fetch(API);
-    if (!r.ok) throw new Error('API error');
-    const d = await r.json();
+async function loadData(){
+  try{
+    const r=await fetch(API);
+    if(!r.ok)throw new Error('API error');
+    const d=await r.json();
+    buildUnifiedSignals(d);
     renderStats(d);
+    renderHighlights(d);
     renderChart(d);
-    renderTable(d);
-  } catch (e) {
-    console.error('Failed to load scorecard:', e);
-    document.getElementById('tableWrap').innerHTML =
-      '<div class="empty"><div class="big">🔌</div><h3>Data unavailable</h3><p>Live tracking data is not yet available. Check back after signals have been graded.</p></div>';
+    renderCards();
+  }catch(e){
+    console.error('Failed:',e);
+    document.getElementById('signalCards').innerHTML='<div class="empty"><div class="big">&#128268;</div><h3>Data unavailable</h3><p>Check back after signals have been graded.</p></div>';
   }
 }
 
-function renderStats(d) {
-  const s = d.summary;
-  const eq = d.equity_curve;
-  if (s) {
-    document.getElementById('hitRate').textContent = (s.overall_hit_rate || 0) + '%';
-    document.getElementById('hitRate').style.color = (s.overall_hit_rate||0) >= 50 ? 'var(--green)' : 'var(--red)';
-    document.getElementById('totalSignals').textContent = s.total_signals_scored || 0;
-  }
-  if (eq) {
-    document.getElementById('equity').textContent = '\$' + (eq.current_capital||10000).toLocaleString(undefined,{maximumFractionDigits:0});
-    const ret = eq.total_return_pct || 0;
-    const retEl = document.getElementById('totalReturn');
-    retEl.textContent = (ret >= 0 ? '+' : '') + ret.toFixed(1) + '%';
-    retEl.style.color = ret >= 0 ? 'var(--green)' : 'var(--red)';
-  }
-}
-
-function renderChart(d) {
-  const eq = d.equity_curve;
-  if (!eq || !eq.curve || eq.curve.length < 2) return;
-
-  const labels = eq.curve.map(p => p.date === 'start' ? 'Start' : p.date);
-  const nerveData = eq.curve.map(p => p.equity);
-
-  // Generate a flat SPY line at  as placeholder (real SPY tracking coming)
-  const spyData = (eq.curve_spy || eq.curve.map(() => 10000)).map(p => typeof p === 'object' ? p.equity : p);
-
-  const ctx = document.getElementById('equityChart').getContext('2d');
-  if (chartInstance) chartInstance.destroy();
-  chartInstance = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels,
-      datasets: [
-        {
-          label: 'NERVE',
-          data: nerveData,
-          borderColor: '#22d3ee',
-          backgroundColor: 'rgba(34,211,238,0.1)',
-          fill: true,
-          tension: 0.3,
-          pointRadius: 3,
-          pointHoverRadius: 6,
-          borderWidth: 2,
-        },
-        {
-          label: 'S&P 500',
-          data: spyData,
-          borderColor: '#71717a',
-          borderDash: [5, 5],
-          fill: false,
-          tension: 0.3,
-          pointRadius: 0,
-          borderWidth: 1.5,
-        }
-      ]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { labels: { color: '#e4e4e7', font: { family: 'Inter', size: 12 } } },
-        tooltip: {
-          callbacks: {
-            label: ctx => ctx.dataset.label + ': \$' + ctx.parsed.y.toLocaleString(undefined, {maximumFractionDigits: 0})
-          }
-        }
-      },
-      scales: {
-        x: {
-          ticks: { color: '#71717a', font: { size: 10 }, maxTicksLimit: 10 },
-          grid: { color: 'rgba(42,42,58,0.5)' }
-        },
-        y: {
-          ticks: {
-            color: '#71717a',
-            font: { family: 'JetBrains Mono', size: 11 },
-            callback: v => '\$' + v.toLocaleString()
-          },
-          grid: { color: 'rgba(42,42,58,0.5)' }
-        }
-      }
+function buildUnifiedSignals(d){
+  allSignals=[];
+  for(const day of(d.grades||[])){
+    for(const sig of(day.signals||[])){
+      if(sig.outcome==='SKIPPED')continue;
+      allSignals.push({date:day.signal_date,ticker:sig.ticker,signal:sig.signal,confidence:sig.confidence||sig.conviction||'',price:sig.price_at_signal,current_price:sig.current_price,change_pct:sig.change_pct,outcome:sig.outcome||'PENDING',source:sig.source||'',catalyst:sig.catalyst||'',entry:sig.entry,target:sig.target,stop_loss:sig.stop_loss,graded:true});
     }
-  });
+  }
+  for(const day of(d.pending||[])){
+    for(const sig of(day.signals||[])){
+      allSignals.push({date:day.signal_date,ticker:sig.ticker,signal:sig.signal,confidence:sig.confidence||'',price:sig.price_at_signal,current_price:null,change_pct:null,outcome:'OPEN',source:sig.source||'',catalyst:sig.catalyst||'',entry:sig.entry,target:sig.target,stop_loss:sig.stop_loss,graded:false});
+    }
+  }
+  allSignals.sort((a,b)=>b.date.localeCompare(a.date)||a.source.localeCompare(b.source));
 }
 
-function renderTable(d) {
-  const grades = d.grades || [];
-  if (!grades.length) {
-    document.getElementById('tableWrap').innerHTML =
-      '<div class="empty"><div class="big">🕰️</div><h3>No graded signals yet</h3><p>Signals are graded after 5 trading days. First grades will appear once enough time has passed.</p></div>';
+function renderStats(d){
+  const s=d.summary||{};
+  const eq=d.equity_curve||{};
+  const hr=s.overall_hit_rate||0;
+  const hitEl=document.getElementById('hitRate');
+  hitEl.textContent=hr+'%';
+  hitEl.style.color=hr>=55?'var(--green)':hr>=45?'var(--yellow)':'var(--red)';
+  document.getElementById('hitDetail').textContent=(s.overall_hits||0)+' hits / '+(s.overall_misses||0)+' misses';
+  const graded=s.total_signals_scored||0;
+  const openCount=allSignals.filter(s=>s.outcome==='OPEN').length;
+  document.getElementById('totalSignals').textContent=graded;
+  document.getElementById('pendingCount').textContent=openCount>0?'+ '+openCount+' open':'all graded';
+  if(eq.current_capital)document.getElementById('equity').textContent='$'+eq.current_capital.toLocaleString(undefined,{maximumFractionDigits:0});
+  const ret=eq.total_return_pct||0;
+  const retEl=document.getElementById('totalReturn');
+  retEl.textContent=(ret>=0?'+':'')+ret.toFixed(1)+'%';
+  retEl.style.color=ret>=0?'var(--green)':'var(--red)';
+  const spyRet=eq.spy_return_pct||0;
+  document.getElementById('spyReturn').textContent='SPY: '+(spyRet>=0?'+':'')+spyRet.toFixed(1)+'%';
+  const streak=s.streak||0;
+  const streakType=s.streak_type||'hit';
+  const streakEl=document.getElementById('streak');
+  streakEl.textContent=streak;
+  streakEl.style.color=streakType==='hit'?'var(--green)':'var(--red)';
+  document.getElementById('streakDetail').textContent=streakType==='hit'?'hit streak':'miss streak';
+  document.getElementById('daysTracked').textContent=s.total_days_tracked||0;
+}
+
+function renderHighlights(d){
+  const s=d.summary||{};
+  const best=s.best_calls||[];
+  const worst=s.worst_calls||[];
+  if(!best.length&&!worst.length)return;
+  document.getElementById('highlightsRow').style.display='grid';
+  document.getElementById('bestCalls').innerHTML=best.map(c=>'<div class="highlight-item"><span><span style="font-family:JetBrains Mono,monospace;font-weight:800">'+c.ticker+'</span> <span style="font-size:11px;color:var(--muted)">'+c.signal+' &middot; '+c.date+'</span></span><span style="font-family:JetBrains Mono,monospace;font-weight:800;color:var(--green)">+'+c.change_pct.toFixed(1)+'%</span></div>').join('')||'<div style="color:var(--muted);font-size:12px;padding:8px">No data yet</div>';
+  document.getElementById('worstCalls').innerHTML=worst.map(c=>'<div class="highlight-item"><span><span style="font-family:JetBrains Mono,monospace;font-weight:800">'+c.ticker+'</span> <span style="font-size:11px;color:var(--muted)">'+c.signal+' &middot; '+c.date+'</span></span><span style="font-family:JetBrains Mono,monospace;font-weight:800;color:var(--red)">'+(c.change_pct>=0?'+':'')+c.change_pct.toFixed(1)+'%</span></div>').join('')||'<div style="color:var(--muted);font-size:12px;padding:8px">No data yet</div>';
+}
+
+function renderChart(d){
+  const eq=d.equity_curve;
+  if(!eq||!eq.curve||eq.curve.length<2)return;
+  const labels=eq.curve.map(p=>p.date==='start'?'Start':p.date);
+  const nerveData=eq.curve.map(p=>p.equity);
+  const spyCurve=eq.curve_spy||[];
+  const spyData=spyCurve.map(p=>typeof p==='object'?p.equity:p);
+  const ctx=document.getElementById('equityChart').getContext('2d');
+  if(chartInstance)chartInstance.destroy();
+  chartInstance=new Chart(ctx,{type:'line',data:{labels,datasets:[{label:'NERVE',data:nerveData,borderColor:'#22d3ee',backgroundColor:'rgba(34,211,238,0.08)',fill:true,tension:0.3,pointRadius:3,pointHoverRadius:6,borderWidth:2.5},{label:'S&P 500',data:spyData,borderColor:'#71717a',borderDash:[5,5],fill:false,tension:0.3,pointRadius:0,borderWidth:1.5}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#e4e4e7',font:{family:'Inter',size:12}}},tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': $'+ctx.parsed.y.toLocaleString(undefined,{maximumFractionDigits:0})}}},scales:{x:{ticks:{color:'#71717a',font:{size:10},maxTicksLimit:10},grid:{color:'rgba(42,42,58,0.5)'}},y:{ticks:{color:'#71717a',font:{family:'JetBrains Mono',size:11},callback:v=>'$'+v.toLocaleString()},grid:{color:'rgba(42,42,58,0.5)'}}}}});
+}
+
+function outcomeTag(o){
+  switch(o){
+    case'HIT':return'<span class="tag tag-hit">HIT TARGET</span>';
+    case'MISS':return'<span class="tag tag-miss">STOPPED OUT</span>';
+    case'OPEN':return'<span class="tag tag-open">STILL OPEN</span>';
+    case'EXPIRED':return'<span class="tag tag-expired">EXPIRED</span>';
+    default:return'<span class="tag tag-open">PENDING</span>';
+  }
+}
+
+function signalTag(s){
+  const cls=s==='BULLISH'?'tag-bullish':s==='BEARISH'?'tag-bearish':'';
+  const arrow=s==='BULLISH'?'&#9650;':s==='BEARISH'?'&#9660;':'&#9670;';
+  return'<span class="tag '+cls+'">'+arrow+' '+s+'</span>';
+}
+
+function confidenceTag(c){
+  if(!c)return'';
+  c=c.toUpperCase();
+  const cls=c==='HIGH'?'tag-high':c==='MED'||c==='MEDIUM'?'tag-med':'tag-watch';
+  return'<span class="tag '+cls+'">'+c+'</span>';
+}
+
+function renderCards(filter){
+  filter=filter||'all';
+  const filtered=filter==='all'?allSignals:filter==='open'?allSignals.filter(s=>s.outcome==='OPEN'):filter==='hit'?allSignals.filter(s=>s.outcome==='HIT'):filter==='miss'?allSignals.filter(s=>s.outcome==='MISS'):allSignals;
+  if(!filtered.length){
+    document.getElementById('signalCards').innerHTML='<div class="empty"><div class="big">&#128225;</div><h3>No '+(filter==='all'?'':'filtered ')+'signals yet</h3><p>Check back after signals are graded.</p></div>';
     return;
   }
-
-  let rows = '';
-  for (const day of grades) {
-    for (const sig of (day.signals || [])) {
-      if (sig.outcome === 'SKIPPED') continue;
-      const outcomeClass = sig.outcome === 'HIT' ? 'tag-hit' : sig.outcome === 'MISS' ? 'tag-miss' : 'tag-pending';
-      const signalClass = sig.signal === 'BULLISH' ? 'tag-bullish' : 'tag-bearish';
-      const chg = sig.change_pct != null ? (sig.change_pct >= 0 ? '+' : '') + sig.change_pct.toFixed(1) + '%' : '—';
-      const chgColor = sig.change_pct > 0 ? 'var(--green)' : sig.change_pct < 0 ? 'var(--red)' : 'var(--muted)';
-      rows += '<tr>' +
-        '<td style="font-weight:700">' + day.signal_date + '</td>' +
-        '<td style="font-family:JetBrains Mono,monospace;font-weight:700">' + sig.ticker + '</td>' +
-        '<td><span class="' + signalClass + '">' + sig.signal + '</span></td>' +
-        '<td>' + (sig.source || '—') + '</td>' +
-        '<td style="font-family:JetBrains Mono,monospace">\$' + (sig.price_at_signal||0).toFixed(2) + '</td>' +
-        '<td style="font-family:JetBrains Mono,monospace;color:' + chgColor + '">' + chg + '</td>' +
-        '<td><span class="tag ' + outcomeClass + '">' + (sig.outcome || 'PENDING') + '</span></td>' +
-        '</tr>';
+  let html='';
+  let lastDate='';
+  for(const s of filtered){
+    if(s.date!==lastDate){
+      const dayLabel=s.graded?'Graded':'Open &mdash; awaiting grade';
+      html+='<div style="font-size:11px;font-weight:800;color:var(--cyan);text-transform:uppercase;letter-spacing:1.5px;margin:20px 0 8px;padding-bottom:6px;border-bottom:1px solid var(--border)">&#128197; '+s.date+' <span style="color:var(--muted);font-weight:600;text-transform:none;letter-spacing:0">&nbsp;&middot;&nbsp;'+dayLabel+'</span></div>';
+      lastDate=s.date;
     }
+    const chg=s.change_pct!=null?(s.change_pct>=0?'+':'')+s.change_pct.toFixed(1)+'%':'&mdash;';
+    const chgColor=s.change_pct>0?'var(--green)':s.change_pct<0?'var(--red)':'var(--muted)';
+    let levelsHtml='';
+    if(s.entry||s.target||s.stop_loss){
+      levelsHtml='<div class="levels">';
+      if(s.entry)levelsHtml+='<div class="level-box"><div class="lbl" style="color:var(--cyan)">Entry</div><div class="val" style="color:var(--cyan)">$'+s.entry+'</div></div>';
+      if(s.target)levelsHtml+='<div class="level-box"><div class="lbl" style="color:var(--green)">Target</div><div class="val" style="color:var(--green)">$'+s.target+'</div></div>';
+      if(s.stop_loss)levelsHtml+='<div class="level-box"><div class="lbl" style="color:var(--red)">Stop</div><div class="val" style="color:var(--red)">$'+s.stop_loss+'</div></div>';
+      levelsHtml+='</div>';
+    }
+    html+='<div class="signal-card" data-outcome="'+s.outcome.toLowerCase()+'"><div class="card-header"><span class="ticker">'+s.ticker+'</span><span class="price">$'+(s.price||0).toFixed(2)+'</span>'+signalTag(s.signal)+confidenceTag(s.confidence)+outcomeTag(s.outcome)+(s.change_pct!=null?'<span class="change" style="color:'+chgColor+'">'+chg+'</span>':'')+'</div>'+(s.catalyst?'<div class="catalyst">'+s.catalyst+'</div>':'')+levelsHtml+'<div class="card-footer"><span>'+( s.source||'Scanner')+'</span>'+(s.current_price?'<span>&middot; Now: $'+s.current_price.toFixed(2)+'</span>':'')+'</div></div>';
   }
+  document.getElementById('signalCards').innerHTML=html;
+}
 
-  document.getElementById('tableWrap').innerHTML =
-    '<div style="overflow-x:auto"><table>' +
-    '<thead><tr><th>Date</th><th>Ticker</th><th>Signal</th><th>Source</th><th>Entry</th><th>Return</th><th>Result</th></tr></thead>' +
-    '<tbody>' + rows + '</tbody></table></div>';
+function filterTab(btn){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  renderCards(btn.dataset.filter);
 }
 
 loadData();
